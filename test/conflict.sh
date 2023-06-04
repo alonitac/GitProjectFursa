@@ -39,4 +39,4 @@ then
   exit 1
 fi
 
-
+echo -e "\n\nWell done! the conflict has been resolved correctly!"

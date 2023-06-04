@@ -1,20 +1,23 @@
-# Git Exercise
+# Git Project [![][autotest_badge]][autotest_workflow]
 
-## Guidelines
+## Preliminaries
 
-1. Fork this repo and clone your forked repo locally. **Make sure you fork ALL branches, not only `main`**
-2. Answer the below questions, commit your results and push them to the forked repo (make sure you push all the involved branches).
-3. Create a PR from branch `main` of your forked repo into `main` of the original repo. 
-4. Make sure you pass automatic tests.
+1. Fork this repo by clicking **Fork** in the top-right corner of the page. **Make sure you fork ALL branches, not only `main`**.
+2. Clone your forked repository by:
+   ```bash
+   git clone https://github.com/<your-username>/<your-project-repo-name>
+   ```
+   Change `<your-username>` and `<your-project-repo-name>` according to your GitHub username and the name you gave to your fork. E.g. `git clone https://github.com/johndoe/GitProject`.
 
-## Branches 
+Let's get started...
 
-Create the following git commit tree. You can add any file you want in each commit. 
-The message for each commit is denoted in the graph (`c1`, `c2`,..., `c12`). 
-Note the (lightweight) tags in commit `c4` and `c8`. 
-Make sure to create exactly these names for branches and commit messages.
+## Part I: Branches 
 
-The parent commit of `c1` should be the last commit in branch `main` after a fresh clone of this repo (commit with message `start here`). 
+Create the following git commit tree.
+You can add any file you want in each commit, but the message for each commit must be exactly the same as denoted in the below graph (`c1`, `c2`,..., `c12`). 
+Note the (lightweight) tags in commit `c8`. 
+
+The parent commit of `c1` must be the last commit in branch `main` after a fresh clone of this repo (commit with message `start here`). 
 
 ```mermaid
 gitGraph
@@ -48,7 +51,7 @@ gitGraph
 **Notes**:
 
 - If you've messed up the repo, you can always checkout branch main and run `git reset --hard <commit-id>` where `<commit-id>` is the commit hash from which you need to start.
-- By default, your tags are'nt being pushed to remote. Make sure to push your tags using the `--tags` flag in the `git push` command.
+- By default, your tags aren't being pushed to remote. Make sure to push your tags using the `--tags` flag in the `git push` command.
 
 ### Test it locally
 
@@ -58,9 +61,9 @@ cd test
 bash branches.sh
 ```
 
-## Merge Conflict
+## Part II: Merge conflict
 
-**It's highly recommended to use a conflict merge tool (like the built-in one in PyCharm and VSCode).**
+**It's highly recommended to use a conflict merge tool (like the built-in one in PyCharm or VSCode).**
 
 Your team colleagues, John Doe and Narayan Nadella, are working together on the same task. 
 Each one of them is working on his own git branch. 
@@ -70,7 +73,7 @@ Each one of them is working on his own git branch.
 
 Both checked out from the same `main` branch. 
 
-You decide to create a new branch called `feature/myfeature` and merge the work of John and Narayan into your branch. You'll encounter a conflict.
+You decide to create a new branch called `feature/myfeature` and merge the work of John and Narayan into your branch. When done this you encountered a conflict.
 
 1. From `mian` branch, create and checkout `feature/myfeature` branch.
 2. Merge `origin/feature/version1` into your branch, take a look on the merge changes.
@@ -87,7 +90,7 @@ cd test
 bash conflict.sh
 ```
 
-## Pre-commit and sensitive data 
+## Part III: Pre-commit and sensitive data 
 
 In this repo, there is a commit which contains credentials of strong identity in AWS.
 The file contains the credentials might look like:
@@ -122,10 +125,10 @@ gitGraph
        commit id: "some other commit 3"
 ```
 
-Note that commits behind the vulnerable commit should remain untouched (like `commit1`),
-while commit ahead the vulnerable commit might change (like `some other commit 2` and `some other commit 3`, instead of `commit 2` and `commit 3`).
+Note that the commits coming before the vulnerable commit should remain untouched (like `commit1`),
+while commit coming after the vulnerable commit might change (like `some other commit 2` and `some other commit 3`, instead of `commit 2` and `commit 3`).
 
-Commit-wise, you are free to do whatever you wish for commits that are coming after the vulnerable commit, as far as **the content of the branch remain the same**. 
+Commit-wise, you are free to do whatever you wish for the commits that are coming after the vulnerable commit, as far as **the content of the branch remain the same**. 
 The branch content should be identical to what it was before your fix, except the vulnerable file that was committed in the `VULNERABLE_COMMIT` commit.  
 
 There are many approaches to solve it, some are using `git reset --hard`, `git rebase` or `git cherry-pick`. Find your preferred way.
@@ -144,52 +147,18 @@ git checkout main
 bash test/sensitive_data.sh
 ```
 
-## Git workflows and remote
-
-[Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) is a branching model for Git that provides a structure for managing feature development and releases in a software project.
-It defines specific branches for each stage of the development process and enforces rules about how and when code can be merged between them.
-
-In the Gitflow model, the main branches are:
-
-- `main`: This branch represents the production-ready code and should always contain the latest stable release. This branch should be protected in GitHub, no one is able to push code into it directly.
-- `dev`: This branch is used for ongoing development of the application and should contain the latest features that are being worked on.
-- Feature branches (starts with `feature/...`): These branches are used for developing new features and should be branched off from the `dev` branch. Once the feature is complete, it is merged back into `dev` via a **Pull Request**. If everything is ok and ready to be deployed in production, the branch owner opens a Pull Request from the branch into `main`.
-- Release branches (starts with `release-*`) for preparing releases. Once the code in a release branch is stable. It is merged into both `dev` and `main`. Any necessary bug fixes for the release are done in this branch.
-
-Your goal is to implement gitflow workflow in this repo. 
-
-**Tip**: You can always start over again by deleting the `dev`, release and feature branches (also from remote if needed), and use the `git reset --hard <commit>` command to reset the `main` branch to certain commit, while `<commit>` is the commit id last before you start this question. 
-
-1. First, create the following [protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule) in your GitHub repo:
-   1. `dev` branch is not allowed to being pushed directly, only via Pull Request.
-   2. `main` branch is read-only, only the release manager (you) can push it directly.
-
-2. From `main`, checkout new `dev` branch.
-3. From `dev` create some feature branch.
-4. Create a **Pull Request** from your feature branch into `dev`, review the PR, and finally merge it into `dev` (don't use fast-forward!).
-5. Observe the created GitHub action job that responsible to "deploy" the updated branch `dev` into **Development** environment (you may need to enable GitHub actions in your account - it's free).
-6. From the merge commit created by the PR, create a release branch. You can call it `release-v1.2` for example. 
-7. Commit some more changes in the release branch. Those changes are simulate some tiny fixes you've received from QA, some typos the product manager has fixed, and release specific content.
-8. Push your release branch. Observe who is the GitHub action jos "deploying" this release to **Test** environment (also known as **Stage** env). Make your fixes if needed.
-9. Once you're satisfied with results, ask your release manager (which is you) to merge your new release into `main`, push `main` and observe how the created GitHub action job is "deploying" the release to ☠️**Production** env☠️. 
-
-
-In GitHub actions, workflows are defined using YAML syntax in `.github/workflows` directory of your repository.
-Take a look into `.github/workflows/prod.yaml` file, which defines Production deployment pipeline.
-Edit the workflow yaml file, such that the workflow is aborted when the user triggered it is not the release manager. 
-
-## Merge two git repositories 
+## Part IV: Merge two git repositories 
 
 In a company implementing typical DevOps pipelines, different teams may be responsible for developing separate microservices of a larger application, each residing in its own Git repository.
-You have been assigned the task of merging two different Git repositories, each containing separate microservices, into a single [monorepo](https://www.atlassian.com/git/tutorials/monorepos). 
+You have been assigned the task of merging two different Git repositories, each containing separate microservice, into a single [monorepo](https://www.atlassian.com/git/tutorials/monorepos). 
 The repositories were maintained by separate teams and have separate commit histories. 
 Your goal is to **preserve the entire commit history** of both repositories while merging the code into a single Git repository, ensuring that the microservices remain functional and properly integrated with each other.
 
-Merge the [GitExerciseOther](https://github.com/alonitac/GitExerciseOther.git) repo into this (GitExercise) repository. 
-The `main` branch of the monorepo should have the following file structure:
+Merge the [GitProjectAnother](https://github.com/alonitac/GitProjectAnother.git) repo into your main [GitProject][github_repo] repo. 
+The `main` branch of the resulted repo should have the following file structure:
 
 ```text
-GitExercise
+GitProject
 └── serviceA/
         ├── [service A files...]
     serviceB/
@@ -198,8 +167,8 @@ GitExercise
 
 ### Notes
 
-- You are to choose what to do in the files of the GitExerciseOther repo that don't under `serviceB` directory. 
-- You can commit any further change (e.g. move files into some directory) after the history of the GitExerciseOther repo has been successfully merged into this repo.  
+- Feel free to make changes to any files in the `GitProjectAnother` repository that are not located under the `serviceB` directory. 
+- Once the history of the `GitProjectAnother` repository has been successfully merged into this repository, feel free to make any additional changes, such as moving files into different directories.  
 - In case of conflicts during the merge, you should prefer this repo's version.  
 
 ### Test it locally
@@ -210,6 +179,24 @@ cd test
 bash merge_repos.sh
 ```
 
-# Gook Luck
 
+## Submission
+
+Time to submit your solution for testing.
+
+1. Commit and push your changes. Make sure you push involved branches, not only `main`. 
+1. In [GitHub Actions][github_actions], watch the **Project auto-testing** workflow (enable Actions if needed). 
+   If there are any failures, click on the failed job and **read the test logs carefully**. Fix your solution, commit and push again.
+
+
+# Good Luck
+
+[DevOpsTheHardWay]: https://github.com/alonitac/DevOpsTheHardWay
+[onboarding_tutorial]: https://github.com/alonitac/DevOpsTheHardWay/blob/main/tutorials/onboarding.md
+[autotest_badge]: ../../actions/workflows/project_auto_testing.yaml/badge.svg?event=push
+[autotest_workflow]: ../../actions/workflows/project_auto_testing.yaml/
+[fork_github]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#forking-a-repository
+[clone_pycharm]: https://www.jetbrains.com/help/pycharm/set-up-a-git-repository.html#clone-repo
+[github_actions]: ../../actions
+[github_repo]: ../../
 

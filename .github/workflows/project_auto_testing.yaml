@@ -1,0 +1,76 @@
+name: Project auto-testing
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+
+jobs:
+  Branches:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: alonitac/GitProject
+          path: GitProjectOriginal
+      - name: Copy test files
+        run: mv -f GitProjectOriginal/test/* test/
+      - name: Test branches question
+        run: |
+          cd test
+          bash branches.sh
+  MergeConflict:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: alonitac/GitProject
+          path: GitProjectOriginal
+      - name: Copy test files
+        run: mv -f GitProjectOriginal/test/* test/
+      - name: Test conflict question
+        run: |
+          git checkout main
+          cd test
+          bash conflict.sh
+  SensitiveData:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: alonitac/GitProject
+          path: GitProjectOriginal
+      - name: Copy test files
+        run: mv -f GitProjectOriginal/test/* test/
+      - name: Test sensitive data question
+        run: |
+          git checkout main
+          bash test/sensitive_data.sh
+  MergeRepos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: alonitac/GitProject
+          path: GitProjectOriginal
+      - name: Copy test files
+        run: mv -f GitProjectOriginal/test/* test/
+      - name: Test merge repos question
+        run: |
+          git checkout main
+          cd test
+          bash merge_repos.sh
